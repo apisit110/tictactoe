@@ -1,70 +1,107 @@
-# Getting Started with Create React App
+# TIC TAC TOE หรือ Xs and Os
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+XO เป็นเกมกระดานชนิดหนึ่ง เนื่องจากวิธีการเล่นผู้เล่นแต่ละฝ่ายจะผลัดกันเขียนรูปวงกลม (O) และกากบาท (X) บนกระดาษ ชาวไทยจึงนิยมเรียกว่าโอเอกซ์
 
-## Available Scripts
+### กติกาการเล่น
 
-In the project directory, you can run:
+ให้ผู้เล่นเขียนตารางขนาด 3×3 บนกระดาษ (กว้าง 3 ช่อง ยาว 3 ช่อง) โดยความกว้างของช่องๆ หนึ่งนั้นจะกว้างเท่าไหร่ก็ได้ จากนั้นผู้เล่นทั้ง 2 คนจะกำหนดกันเองว่าใครจะเป็นฝ่ายได้เล่นก่อน คนที่เล่นก่อนจะเขียนเครื่องหมาย O (หรือ X ก็ได้แล้วแต่) จากนั้นอีกคนหนึ่งก็จะเขียนเครื่องหมายตรงข้ามกับผู้เล่นก่อนหน้านี้ทำไว้ โดยที่ผู้เล่นห้ามเขียนเครื่องหมายของตัวเองซ้ำช่องที่มีคนเขียนก่อนหน้านี้ จากนั้นทั้ง 2 ฝ่ายก็จะผลัดกันเขียนเครื่องหมายของตัวเองจนเต็มกระดาน 3×3 ดังกล่าว
 
-### `yarn start`
+### วิธีการตัดสินหาผู้ชนะ
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+เกมนี้จะมีผู้ชนะก็ต่อเมื่อมีผู้เล่นคนหนึ่งเขียนเครื่องหมายของตัวเองเรียงเป็นแนวตรงหรือแนวทแยงต่อกัน 3 อัน เพราะฉะนั้นผู้เล่นแต่ละฝ่ายควรจะพยายามที่จะวางเครื่องหมายของตัวเองให้ได้ตามแนว ในขณะเดียวกันก็ควรจะวางเครื่องหมายของตัวเองกั้นแนวที่ผู้เล่นอีกฝ่ายที่กำลังสร้างด้วย แต่ถ้าเล่นกันจนจบแล้วไม่มีผู้เล่นฝ่ายใดสามารถที่จะวางเครื่องหมายให้เรียงไปตามแนวได้ ถือว่าเสมอกัน
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### ในโปรแกรมนี้ทำอะไรบ้าง
 
-### `yarn test`
+1. สามารถกำหนด ขนาดตารางของ XO นอกจาก 3x3 เป็นขนาดใด ๆ ก็ได้
+1. เก็บ history play ในเกมนั้น
+1. เพิ่มเติมอาจเพิ่มกติกาได้ว่า สามารถกาติดกัน 3 หรือ 5 ช่องจะเป็นผู้ชนะ
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### วิธีตรวจสอบหาผู้ชนะ
 
-### `yarn build`
+1. ต้องไม่กาซ้ำ
+1. ถ้าหากผู้เล่นฝ่าย o กา ให้กำหนดค่าในตำแหน่งนั้นๆเป็น o
+1. ถ้าหากผู้เล่นฝ่าย x กา ให้กำหนดค่าในตำแหน่งนั้นๆเป็น x
+1. เมื่อกาแล้วสลับฝั่งเล่น
+1. ตรวจสอบจาก ซ้ายไปขวา ที่มีค่าเหมือนกันทีละแถวเช่น 123, 456, 789
+1. ตรวจสอบจาก บนลงล่าง ที่มีค่าเหมือนกันทีละแถวเช่น 147, 258, 369
+1. ตรวจสอบแบบ แนวทแยง ที่มีค่าเหมือนกันเช่น 159, 357
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Algorithm
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```react
+    // let temp_input_len = Number(input_len);
+    // let temp_input_len = initialInput_len;
+    let temp_input_len = 5;
+    let startAt = 1;
+    let num1 = 0;
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    let arr1 = []; // แนวนอน
+    let arr2 = []; // แนวตั้ง
+    let arr31 = []; // แนวทแยงจากจุดบนซ้าย
+    let arr32 = []; // แนวทแยงจากจุดบนขวา
 
-### `yarn eject`
+    for (let i = 1; i <= temp_input_len; i++) {
+      let temp_arr1 = [];
+      let temp_arr2 = [];
+      for (let j = 0; j < temp_input_len; j++) {
+        num1++;
+        if (num1) {
+          temp_arr1.push(num1);
+        }
+        if (!(num1 % temp_input_len)) {
+          arr1[i - 1] = temp_arr1;
+        }
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+        let num2 = i + temp_input_len * j;
+        if (num2) {
+          temp_arr2.push(i + temp_input_len * j);
+        }
+        if (temp_arr2.length === temp_input_len) {
+          arr2[i - 1] = temp_arr2;
+        }
+      }
+      arr31.push(startAt * i + temp_input_len * (i - 1));
+      arr32.push(temp_input_len * i - startAt * (i - 1));
+    }
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- สร้าง array เก็บตำแหน่งที่ใช้ตรวจสอบที่มีค่าเหมือนกัน
+- arr1 คือการชนะแบบแนวนอนเช่น 123, 456, 789
+- arr2 คือการชนะแบบแนวตั้งเช่น 147, 258, 369
+- arr31 คือการชนะแบบแนวทแยง ตรวจสอบจากบนซ้ายไปล่างขวาเช่น 159
+- arr32 คือการชนะแบบแนวทแยง ตรวจสอบจากบนขวาไปล่างซ้าย 357
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- arr1 จะมีรูปแบบประมาณนี้ [[1,2,3], [4,5,6], [7,8,9]]
+- arr2 จะมีรูปแบบประมาณนี้ [[1,4,7], [2,5,8], [3,6,9]]
+- arr31 จะมีรูปแบบประมาณนี้ [1,5,9]
+- arr32 จะมีรูปแบบประมาณนี้ [3,5,7]
+- นี้คือการตรวจสอบหาผู้ชนะ จากค่าใน array ที่มีค่าเหมือนกันทั้งหมด ตัวอย่าง ["x","x","x"]
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### SETUP
 
-## Learn More
+โปรเจคนี้นำ React มาใช้สร้าง frontend ใช้ CSS Module ตกแต่ง การนำไปใช้งานสามารถทำได้ 2 วิธี
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. รันโปรแกรมผ่าน localhost เป็น development mode
+1. รันโปรแกรมผ่าน web server เช่น apache เป็น production mode
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+#### วิธีที่ 1 development mode
 
-### Code Splitting
+1. ในเครื่องติดตั้ง node แล้ว
+1. ดาวน์โหลดเป็นไฟล์ zip หรือใช้ git clone https://github.com/apisit110/tictactoe.git
+1. หลักจากได้ไฟล์มา เข้าไปที่โฟลเดอร์โปรเจคแล้วทำการติดตั้ง dependencies ด้วยคำสั่ง npm install หรือ yarn
+1. เมื่อติดตั้ง dependencies เสร็จแล้วรันคำสั่ง npm run start หรือ yarn start เพื่อเริ่มโปรเจค
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+#### วิธีที่ 2 production mode
 
-### Analyzing the Bundle Size
+1. ในเครื่องติดตั้ง node แล้ว
+1. ดาวน์โหลดเป็นไฟล์ zip หรือใช้ git clone https://github.com/apisit110/tictactoe.git
+1. หลักจากได้ไฟล์มา เข้าไปที่โฟลเดอร์โปรเจคแล้วทำการติดตั้ง dependencies ด้วยคำสั่ง npm install หรือ yarn
+1. ใช้โปรแกรมจำลอง web server เช่น xampp หรือ Web Server for Chrome(แนะนำอันนี้โหลดง่ายใช้ง่าย)
+1. เมื่อติดตั้ง dependencies เสร็จแล้วฤนคำสั่ง npm run build หรือ yarn build เพื่อสร้าง static file
+1. นำไฟล์ในโฟลเดอร์ build ที่ได้ ไป deploy บน web server
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+> https://create-react-app.dev/docs/deployment/
 
-### Making a Progressive Web App
+### อ้างอิง
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[โอเอกซ์](https://th.wikipedia.org/wiki/%E0%B9%82%E0%B8%AD%E0%B9%80%E0%B8%AD%E0%B8%81%E0%B8%8B%E0%B9%8C)
