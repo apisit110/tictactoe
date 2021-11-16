@@ -1,3 +1,5 @@
+[XO game this exam live on netlify server](https://tictactoexoxo.netlify.app/)
+
 # TIC TAC TOE หรือ Xs and Os
 
 XO เป็นเกมกระดานชนิดหนึ่ง เนื่องจากวิธีการเล่นผู้เล่นแต่ละฝ่ายจะผลัดกันเขียนรูปวงกลม (O) และกากบาท (X) บนกระดาษ ชาวไทยจึงนิยมเรียกว่าโอเอกซ์
